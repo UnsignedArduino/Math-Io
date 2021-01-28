@@ -35,13 +35,21 @@ namespace myTiles {
     //% fixedInstance jres blockIdentity=images._tile
     export const tile11 = image.ofBuffer(hex``);
     //% fixedInstance jres blockIdentity=images._tile
-    export const tile16 = image.ofBuffer(hex``);
+    export const tile22 = image.ofBuffer(hex``);
+    //% fixedInstance jres blockIdentity=images._tile
+    export const tile24 = image.ofBuffer(hex``);
+    //% fixedInstance jres blockIdentity=images._tile
+    export const tile23 = image.ofBuffer(hex``);
     //% fixedInstance jres blockIdentity=images._tile
     export const tile17 = image.ofBuffer(hex``);
     //% fixedInstance jres blockIdentity=images._tile
     export const tile18 = image.ofBuffer(hex``);
     //% fixedInstance jres blockIdentity=images._tile
     export const tile19 = image.ofBuffer(hex``);
+    //% fixedInstance jres blockIdentity=images._tile
+    export const tile20 = image.ofBuffer(hex``);
+    //% fixedInstance jres blockIdentity=images._tile
+    export const tile16 = image.ofBuffer(hex``);
 
     helpers._registerFactory("tilemap", function(name: string) {
         switch(helpers.stringTrim(name)) {
@@ -111,7 +119,7 @@ namespace myTiles {
 ................................................................
 ................................................................
 ................................................................
-`, [myTiles.transparency8,myTiles.tile4,myTiles.tile5,myTiles.tile6,myTiles.tile7,myTiles.tile8,myTiles.tile9,myTiles.tile10,myTiles.tile1,myTiles.tile2,myTiles.tile3,myTiles.tile11,myTiles.tile16,myTiles.tile17,myTiles.tile18,myTiles.tile19], TileScale.Eight);
+`, [myTiles.transparency8,myTiles.tile4,myTiles.tile5,myTiles.tile6,myTiles.tile7,myTiles.tile8,myTiles.tile9,myTiles.tile10,myTiles.tile1,myTiles.tile2,myTiles.tile3,myTiles.tile11,myTiles.tile23,myTiles.tile16,myTiles.tile18,myTiles.tile20,myTiles.tile22,myTiles.tile24], TileScale.Eight);
         }
         return null;
     })
@@ -150,14 +158,22 @@ namespace myTiles {
             case "tile15":return tile15;
             case "acceptor":
             case "tile11":return tile11;
-            case "fast_conveyor_right":
-            case "tile16":return tile16;
-            case "fast_conveyor_left":
+            case "conveyor_right_up":
+            case "tile22":return tile22;
+            case "conveyor_left_up":
+            case "tile24":return tile24;
+            case "conveyor_left_down":
+            case "tile23":return tile23;
+            case "conveyor_up_right":
             case "tile17":return tile17;
-            case "fast_conveyor_up":
+            case "conveyor_down_left":
             case "tile18":return tile18;
-            case "fast_conveyor_down":
+            case "conveyor_down_right":
             case "tile19":return tile19;
+            case "conveyor_right_down":
+            case "tile20":return tile20;
+            case "conveyor_up_left":
+            case "tile16":return tile16;
         }
         return null;
     })

@@ -99,29 +99,53 @@
         "tilemapTile": true,
         "displayName": "acceptor"
     },
-    "tile16": {
-        "data": "hwQIAAgAAABQVVUFQFRFBFBERAVQRVQFUFVVBUBURQRQREQFUEVUBQ==",
+    "tile22": {
+        "data": "hwQIAAgAAADAvMsMy8zMC8y8uwu8y7sLvMu7C8y7zAvLu7sMAAAAAA==",
         "mimeType": "image/x-mkcd-f4",
         "tilemapTile": true,
-        "displayName": "fast_conveyor_right"
+        "displayName": "conveyor_right_up"
+    },
+    "tile24": {
+        "data": "hwQIAAgAAAAAAAAAy7u7DMy7zAu8y7sLvMu7C8y8uwvLzMwLwLzLDA==",
+        "mimeType": "image/x-mkcd-f4",
+        "tilemapTile": true,
+        "displayName": "conveyor_left_up"
+    },
+    "tile23": {
+        "data": "hwQIAAgAAAAAAAAAwLu7vLDMu8ywu7zLsLu8y7C7y8ywzMy8wLzLDA==",
+        "mimeType": "image/x-mkcd-f4",
+        "tilemapTile": true,
+        "displayName": "conveyor_left_down"
     },
     "tile17": {
-        "data": "hwQIAAgAAABQRVQFUEREBUBURQRQVVUFUEVUBVBERAVAVEUEUFVVBQ==",
+        "data": "hwQIAAgAAAAAAAAAwLu7y7C8u8ywvLu8sMu8vLC7y8zAvMvMsMzMCw==",
         "mimeType": "image/x-mkcd-f4",
         "tilemapTile": true,
-        "displayName": "fast_conveyor_left"
+        "displayName": "conveyor_up_right"
     },
     "tile18": {
-        "data": "hwQIAAgAAAAAAAAAVVRVVEVURVREVURVRFVEVUVURVRVVFVUAAAAAA==",
+        "data": "hwQIAAgAAACwzMwLzLzLDMy8uwvLy7wLy7vLC8y7ywu8u7sMAAAAAA==",
         "mimeType": "image/x-mkcd-f4",
         "tilemapTile": true,
-        "displayName": "fast_conveyor_up"
+        "displayName": "conveyor_down_left"
     },
     "tile19": {
-        "data": "hwQIAAgAAAAAAAAARVVFVUVURVRVRFVEVURVREVURVRFVUVVAAAAAA==",
+        "data": "hwQIAAgAAAAAAAAAvLu7DMy7ywvLu8sLy8u8C8y8uwvMvMsMsMzMCw==",
         "mimeType": "image/x-mkcd-f4",
         "tilemapTile": true,
-        "displayName": "fast_conveyor_down"
+        "displayName": "conveyor_down_right"
+    },
+    "tile20": {
+        "data": "hwQIAAgAAADAvMsMsMzMvLC7y8ywu7zLsLu8y7DMu8zAu7u8AAAAAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "tilemapTile": true,
+        "displayName": "conveyor_right_down"
+    },
+    "tile16": {
+        "data": "hwQIAAgAAACwzMwLwLzLzLC7y8ywy7y8sLy7vLC8u8zAu7vLAAAAAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "tilemapTile": true,
+        "displayName": "conveyor_up_left"
     },
     "level1": {
         "id": "level1",
@@ -140,10 +164,12 @@
             "myTiles.tile2",
             "myTiles.tile3",
             "myTiles.tile11",
+            "myTiles.tile23",
             "myTiles.tile16",
-            "myTiles.tile17",
             "myTiles.tile18",
-            "myTiles.tile19"
+            "myTiles.tile20",
+            "myTiles.tile22",
+            "myTiles.tile24"
         ],
         "displayName": "map"
     },

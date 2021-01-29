@@ -37,6 +37,86 @@ a . . . . . . a
 a . . . . . . a 
 a a a a a a a a 
 `;
+            case "image8":return img`
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+`;
+            case "image9":return img`
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+`;
+            case "image4":
+            case "generator_up":return img`
+. . f f f f . . 
+f f f b b f f f 
+f b b b b b b f 
+f b b b b b b f 
+f b b b b b b f 
+f b b b b b b f 
+f b b b b b b f 
+f f f f f f f f 
+`;
+            case "image5":
+            case "generator_right":return img`
+f f f f f f f . 
+f b b b b b f . 
+f b b b b b f f 
+f b b b b b b f 
+f b b b b b b f 
+f b b b b b f f 
+f b b b b b f . 
+f f f f f f f . 
+`;
+            case "image6":
+            case "generator_down":return img`
+f f f f f f f f 
+f b b b b b b f 
+f b b b b b b f 
+f b b b b b b f 
+f b b b b b b f 
+f b b b b b b f 
+f f f b b f f f 
+. . f f f f . . 
+`;
+            case "image7":
+            case "generator_left":return img`
+. f f f f f f f 
+. f b b b b b f 
+f f b b b b b f 
+f b b b b b b f 
+f b b b b b b f 
+f f b b b b b f 
+. f b b b b b f 
+. f f f f f f f 
+`;
         }
         return null;
     })

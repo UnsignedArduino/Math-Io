@@ -1,6 +1,26 @@
+namespace SpriteKind {
+    export const Equipement = SpriteKind.create()
+    export const Generator = SpriteKind.create()
+}
 function on_buildable_tile (sprite: Sprite) {
-    if (sprite.tileKindAt(TileDirection.Center, assets.tile`transparency8`)) {
-        return true
+    for (let tile of [
+    assets.tile`transparency8`,
+    assets.tile`tile_1`,
+    assets.tile`tile_2`,
+    assets.tile`tile_3`,
+    assets.tile`tile_0`,
+    assets.tile`tile_4`,
+    assets.tile`tile_5`,
+    assets.tile`tile_6`,
+    assets.tile`tile_7`,
+    assets.tile`tile_8`,
+    assets.tile`tile_9`
+    ]) {
+        if (sprite.tileKindAt(TileDirection.Center, tile)) {
+            if (grid.getSprites(tiles.locationOfSprite(sprite)).length == 0) {
+                return true
+            }
+        }
     }
     return false
 }
@@ -13,6 +33,8 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
             if (blockMenu.selectedMenuIndex() == 1) {
                 if (on_deleteable_tile(sprite_cursor_box)) {
                     tiles.setTileAt(tiles.locationOfSprite(sprite_cursor_box), assets.tile`transparency16`)
+                } else if (on_deleteable_sprite(sprite_cursor_box) != sprite_cursor_box) {
+                    on_deleteable_sprite(sprite_cursor_box).destroy()
                 } else {
                     game.showLongText("Cannot delete tile here!", DialogLayout.Bottom)
                 }
@@ -21,7 +43,7 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
                     blockMenu.showMenu(["Cancel", "Equipment", "Conveyor belt"], MenuStyle.List, MenuLocation.BottomHalf)
                     wait_for_select()
                     if (blockMenu.selectedMenuIndex() == 1) {
-                    	
+                        ask_for_equipment()
                     } else if (blockMenu.selectedMenuIndex() == 2) {
                         ask_for_conveyor()
                     }
@@ -38,6 +60,16 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
         enable_cursor(true, true)
     }
 })
+function on_deleteable_sprite (sprite: Sprite) {
+    for (let kind of [SpriteKind.Generator]) {
+        for (let sprite_sprite of grid.getSprites(tiles.locationOfSprite(sprite))) {
+            if (sprite_sprite.kind() == kind) {
+                return sprite_sprite
+            }
+        }
+    }
+    return sprite
+}
 function on_deleteable_tile (sprite: Sprite) {
     for (let tile of [
     assets.tile`conveyor_right`,
@@ -54,7 +86,9 @@ function on_deleteable_tile (sprite: Sprite) {
     assets.tile`conveyor_left_up`
     ]) {
         if (sprite.tileKindAt(TileDirection.Center, tile)) {
-            return true
+            if (grid.getSprites(tiles.locationOfSprite(sprite)).length == 0) {
+                return true
+            }
         }
     }
     return false
@@ -195,9 +229,50 @@ function wait_for_select () {
     }
     blockMenu.closeMenu()
 }
+function ask_for_equipment () {
+    while (true) {
+        blockMenu.showMenu(["Cancel", "Last placed equipment", "Generator"], MenuStyle.Grid, MenuLocation.BottomHalf)
+        wait_for_select()
+        if (blockMenu.selectedMenuIndex() == 0) {
+            break;
+        } else if (blockMenu.selectedMenuIndex() == 1) {
+            sprite_equipment = sprites.create(last_placed_equipement, SpriteKind.Generator)
+            tiles.placeOnTile(sprite_equipment, tiles.locationOfSprite(sprite_cursor_box))
+            break;
+        } else if (blockMenu.selectedMenuIndex() == 2) {
+            blockMenu.showMenu(["Back", "^ Generator up ^", "> Generator right >", "v Generator down v", "< Generator left <"], MenuStyle.List, MenuLocation.BottomHalf)
+            wait_for_select()
+            if (blockMenu.selectedMenuIndex() == 1) {
+                sprite_equipment = sprites.create(assets.image`generator_up`, SpriteKind.Generator)
+                last_placed_equipement = assets.image`generator_up`
+            } else if (blockMenu.selectedMenuIndex() == 2) {
+                sprite_equipment = sprites.create(assets.image`generator_right`, SpriteKind.Generator)
+                last_placed_equipement = assets.image`generator_right`
+            } else if (blockMenu.selectedMenuIndex() == 3) {
+                sprite_equipment = sprites.create(assets.image`generator_down`, SpriteKind.Generator)
+                last_placed_equipement = assets.image`generator_down`
+            } else if (blockMenu.selectedMenuIndex() == 4) {
+                sprite_equipment = sprites.create(assets.image`generator_left`, SpriteKind.Generator)
+                last_placed_equipement = assets.image`generator_left`
+            }
+            if (blockMenu.selectedMenuIndex() > 0) {
+                tiles.placeOnTile(sprite_equipment, tiles.locationOfSprite(sprite_cursor_box))
+                grid.snap(sprite_equipment)
+                break;
+            }
+        }
+    }
+}
 blockMenu.onMenuOptionSelected(function (option, index) {
     selected = true
 })
+// TODO: 
+// - Convert belts to sprites
+// - Make generators work
+// - Make number spawning work
+// - Make conveyor belts work
+// - Make target work
+let sprite_equipment: Sprite = null
 let selected = false
 let sprite_cursor: Sprite = null
 let sprite_cursor_pointer: Sprite = null
@@ -205,11 +280,13 @@ let controls_enabled = false
 let sprite_cursor_box: Sprite = null
 let target_needed = 0
 let target_number = 0
+let last_placed_equipement: Image = null
 let last_placed_belt: Image = null
 make_map()
 make_cursor()
 blockMenu.setColors(1, 15)
 last_placed_belt = assets.tile`conveyor_up`
+last_placed_equipement = assets.image`generator_up`
 info.setScore(0)
 target_number = 2
 target_needed = 30

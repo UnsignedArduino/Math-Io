@@ -7,7 +7,8 @@
         "Sprite Grid": "github:microsoft/arcade-grid#v1.2.2",
         "tilemaps": "github:microsoft/pxt-tilemaps#v1.10.0",
         "arcade-sprite-data": "github:microsoft/arcade-sprite-data#v0.1.0",
-        "small-tilemaps": "github:riknoll/small-tilemaps#v0.0.1"
+        "small-tilemaps": "github:riknoll/small-tilemaps#v0.0.1",
+        "block-menu": "github:riknoll/arcade-custom-menu#v0.0.1"
     },
     "files": [
         "main.blocks",
@@ -15,7 +16,9 @@
         "README.md",
         "assets.json",
         "tilemap.g.jres",
-        "tilemap.g.ts"
+        "tilemap.g.ts",
+        "images.g.jres",
+        "images.g.ts"
     ],
     "testFiles": [
         "test.ts"

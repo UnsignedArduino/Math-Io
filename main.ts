@@ -1,6 +1,7 @@
 namespace SpriteKind {
     export const Equipement = SpriteKind.create()
     export const Generator = SpriteKind.create()
+    export const Belt = SpriteKind.create()
 }
 function on_buildable_tile (sprite: Sprite) {
     for (let tile of [
@@ -31,9 +32,7 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
             blockMenu.showMenu(["Cancel", "Delete", "Add"], MenuStyle.List, MenuLocation.BottomHalf)
             wait_for_select()
             if (blockMenu.selectedMenuIndex() == 1) {
-                if (on_deleteable_tile(sprite_cursor_box)) {
-                    tiles.setTileAt(tiles.locationOfSprite(sprite_cursor_box), assets.tile`transparency16`)
-                } else if (on_deleteable_sprite(sprite_cursor_box) != sprite_cursor_box) {
+                if (on_deleteable_sprite(sprite_cursor_box) != sprite_cursor_box) {
                     on_deleteable_sprite(sprite_cursor_box).destroy()
                 } else {
                     game.showLongText("Cannot delete tile here!", DialogLayout.Bottom)
@@ -61,7 +60,7 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     }
 })
 function on_deleteable_sprite (sprite: Sprite) {
-    for (let kind of [SpriteKind.Generator]) {
+    for (let kind of [SpriteKind.Belt, SpriteKind.Generator]) {
         for (let sprite_sprite of grid.getSprites(tiles.locationOfSprite(sprite))) {
             if (sprite_sprite.kind() == kind) {
                 return sprite_sprite
@@ -69,29 +68,6 @@ function on_deleteable_sprite (sprite: Sprite) {
         }
     }
     return sprite
-}
-function on_deleteable_tile (sprite: Sprite) {
-    for (let tile of [
-    assets.tile`conveyor_right`,
-    assets.tile`conveyor_left`,
-    assets.tile`conveyor_up`,
-    assets.tile`conveyor_down`,
-    assets.tile`conveyor_up_left`,
-    assets.tile`conveyor_up_right`,
-    assets.tile`conveyor_down_left`,
-    assets.tile`conveyor_down_right`,
-    assets.tile`conveyor_right_down`,
-    assets.tile`conveyor_right_up`,
-    assets.tile`conveyor_left_down`,
-    assets.tile`conveyor_left_up`
-    ]) {
-        if (sprite.tileKindAt(TileDirection.Center, tile)) {
-            if (grid.getSprites(tiles.locationOfSprite(sprite)).length == 0) {
-                return true
-            }
-        }
-    }
-    return false
 }
 spriteutils.createRenderable(150, function (screen2) {
     if (sprite_cursor_pointer.top > 12) {
@@ -137,70 +113,72 @@ function ask_for_conveyor () {
         if (blockMenu.selectedMenuIndex() == 0) {
             break;
         } else if (blockMenu.selectedMenuIndex() == 1) {
-            tiles.setTileAt(tiles.locationOfSprite(sprite_cursor_box), last_placed_belt)
+            sprite_conveyor_belt = sprites.create(last_placed_belt, SpriteKind.Belt)
+            tiles.placeOnTile(sprite_conveyor_belt, tiles.locationOfSprite(sprite_cursor_box))
+            grid.snap(sprite_conveyor_belt)
             break;
         } else if (blockMenu.selectedMenuIndex() == 2) {
             blockMenu.showMenu(["Back", "^ Up straight ^", "^< Up left ^<", "^> Up right ^>"], MenuStyle.List, MenuLocation.BottomHalf)
             wait_for_select()
             if (blockMenu.selectedMenuIndex() == 1) {
-                tiles.setTileAt(tiles.locationOfSprite(sprite_cursor_box), assets.tile`conveyor_up`)
-                last_placed_belt = assets.tile`conveyor_up`
+                sprite_conveyor_belt = sprites.create(assets.image`conveyor_up`, SpriteKind.Belt)
             } else if (blockMenu.selectedMenuIndex() == 2) {
-                tiles.setTileAt(tiles.locationOfSprite(sprite_cursor_box), assets.tile`conveyor_up_left`)
-                last_placed_belt = assets.tile`conveyor_up_left`
+                sprite_conveyor_belt = sprites.create(assets.image`conveyor_up_left`, SpriteKind.Belt)
             } else if (blockMenu.selectedMenuIndex() == 3) {
-                tiles.setTileAt(tiles.locationOfSprite(sprite_cursor_box), assets.tile`conveyor_up_right`)
-                last_placed_belt = assets.tile`conveyor_up_right`
+                sprite_conveyor_belt = sprites.create(assets.image`conveyor_up_right`, SpriteKind.Belt)
             }
             if (blockMenu.selectedMenuIndex() > 0) {
+                tiles.placeOnTile(sprite_conveyor_belt, tiles.locationOfSprite(sprite_cursor_box))
+                last_placed_belt = sprite_conveyor_belt.image
+                grid.snap(sprite_conveyor_belt)
                 break;
             }
         } else if (blockMenu.selectedMenuIndex() == 3) {
             blockMenu.showMenu(["Back", "v Down straight v", "v< Down left v<", "v> Down right v>"], MenuStyle.List, MenuLocation.BottomHalf)
             wait_for_select()
             if (blockMenu.selectedMenuIndex() == 1) {
-                tiles.setTileAt(tiles.locationOfSprite(sprite_cursor_box), assets.tile`conveyor_down`)
-                last_placed_belt = assets.tile`conveyor_down`
+                sprite_conveyor_belt = sprites.create(assets.image`conveyor_down`, SpriteKind.Belt)
             } else if (blockMenu.selectedMenuIndex() == 2) {
-                tiles.setTileAt(tiles.locationOfSprite(sprite_cursor_box), assets.tile`conveyor_down_left`)
-                last_placed_belt = assets.tile`conveyor_down_left`
+                sprite_conveyor_belt = sprites.create(assets.image`conveyor_down_left`, SpriteKind.Belt)
             } else if (blockMenu.selectedMenuIndex() == 3) {
-                tiles.setTileAt(tiles.locationOfSprite(sprite_cursor_box), assets.tile`conveyor_down_right`)
-                last_placed_belt = assets.tile`conveyor_down_right`
+                sprite_conveyor_belt = sprites.create(assets.image`conveyor_down_right`, SpriteKind.Belt)
             }
             if (blockMenu.selectedMenuIndex() > 0) {
+                tiles.placeOnTile(sprite_conveyor_belt, tiles.locationOfSprite(sprite_cursor_box))
+                last_placed_belt = sprite_conveyor_belt.image
+                grid.snap(sprite_conveyor_belt)
                 break;
             }
         } else if (blockMenu.selectedMenuIndex() == 4) {
             blockMenu.showMenu(["Back", "< Straight left <", "<^ Left up <^", "<v Left down <v"], MenuStyle.List, MenuLocation.BottomHalf)
             wait_for_select()
             if (blockMenu.selectedMenuIndex() == 1) {
-                tiles.setTileAt(tiles.locationOfSprite(sprite_cursor_box), assets.tile`conveyor_left`)
-                last_placed_belt = assets.tile`conveyor_left`
+                sprite_conveyor_belt = sprites.create(assets.image`conveyor_left`, SpriteKind.Belt)
             } else if (blockMenu.selectedMenuIndex() == 2) {
-                tiles.setTileAt(tiles.locationOfSprite(sprite_cursor_box), assets.tile`conveyor_left_up`)
-                last_placed_belt = assets.tile`conveyor_left_up`
+                sprite_conveyor_belt = sprites.create(assets.image`conveyor_left_up`, SpriteKind.Belt)
             } else if (blockMenu.selectedMenuIndex() == 3) {
-                tiles.setTileAt(tiles.locationOfSprite(sprite_cursor_box), assets.tile`conveyor_left_down`)
-                last_placed_belt = assets.tile`conveyor_left_down`
+                sprite_conveyor_belt = sprites.create(assets.image`conveyor_left_down`, SpriteKind.Belt)
             }
             if (blockMenu.selectedMenuIndex() > 0) {
+                tiles.placeOnTile(sprite_conveyor_belt, tiles.locationOfSprite(sprite_cursor_box))
+                last_placed_belt = sprite_conveyor_belt.image
+                grid.snap(sprite_conveyor_belt)
                 break;
             }
         } else if (blockMenu.selectedMenuIndex() == 5) {
             blockMenu.showMenu(["Back", "> Straight right >", ">^ Right up >^", ">v Right down >v"], MenuStyle.List, MenuLocation.BottomHalf)
             wait_for_select()
             if (blockMenu.selectedMenuIndex() == 1) {
-                tiles.setTileAt(tiles.locationOfSprite(sprite_cursor_box), assets.tile`conveyor_right`)
-                last_placed_belt = assets.tile`conveyor_right`
+                sprite_conveyor_belt = sprites.create(assets.image`conveyor_right`, SpriteKind.Belt)
             } else if (blockMenu.selectedMenuIndex() == 2) {
-                tiles.setTileAt(tiles.locationOfSprite(sprite_cursor_box), assets.tile`conveyor_right_up`)
-                last_placed_belt = assets.tile`conveyor_right_up`
+                sprite_conveyor_belt = sprites.create(assets.image`conveyor_right_up`, SpriteKind.Belt)
             } else if (blockMenu.selectedMenuIndex() == 3) {
-                tiles.setTileAt(tiles.locationOfSprite(sprite_cursor_box), assets.tile`conveyor_right_down`)
-                last_placed_belt = assets.tile`conveyor_right_down`
+                sprite_conveyor_belt = sprites.create(assets.image`conveyor_right_down`, SpriteKind.Belt)
             }
             if (blockMenu.selectedMenuIndex() > 0) {
+                tiles.placeOnTile(sprite_conveyor_belt, tiles.locationOfSprite(sprite_cursor_box))
+                last_placed_belt = sprite_conveyor_belt.image
+                grid.snap(sprite_conveyor_belt)
                 break;
             }
         }
@@ -236,28 +214,29 @@ function ask_for_equipment () {
         if (blockMenu.selectedMenuIndex() == 0) {
             break;
         } else if (blockMenu.selectedMenuIndex() == 1) {
-            sprite_equipment = sprites.create(last_placed_equipement, SpriteKind.Generator)
-            tiles.placeOnTile(sprite_equipment, tiles.locationOfSprite(sprite_cursor_box))
+            sprite_equipement = sprites.create(last_placed_equipement, SpriteKind.Generator)
+            tiles.placeOnTile(sprite_equipement, tiles.locationOfSprite(sprite_cursor_box))
+            grid.snap(sprite_equipement)
             break;
         } else if (blockMenu.selectedMenuIndex() == 2) {
             blockMenu.showMenu(["Back", "^ Generator up ^", "> Generator right >", "v Generator down v", "< Generator left <"], MenuStyle.List, MenuLocation.BottomHalf)
             wait_for_select()
             if (blockMenu.selectedMenuIndex() == 1) {
-                sprite_equipment = sprites.create(assets.image`generator_up`, SpriteKind.Generator)
+                sprite_equipement = sprites.create(assets.image`generator_up`, SpriteKind.Generator)
                 last_placed_equipement = assets.image`generator_up`
             } else if (blockMenu.selectedMenuIndex() == 2) {
-                sprite_equipment = sprites.create(assets.image`generator_right`, SpriteKind.Generator)
+                sprite_equipement = sprites.create(assets.image`generator_right`, SpriteKind.Generator)
                 last_placed_equipement = assets.image`generator_right`
             } else if (blockMenu.selectedMenuIndex() == 3) {
-                sprite_equipment = sprites.create(assets.image`generator_down`, SpriteKind.Generator)
+                sprite_equipement = sprites.create(assets.image`generator_down`, SpriteKind.Generator)
                 last_placed_equipement = assets.image`generator_down`
             } else if (blockMenu.selectedMenuIndex() == 4) {
-                sprite_equipment = sprites.create(assets.image`generator_left`, SpriteKind.Generator)
+                sprite_equipement = sprites.create(assets.image`generator_left`, SpriteKind.Generator)
                 last_placed_equipement = assets.image`generator_left`
             }
             if (blockMenu.selectedMenuIndex() > 0) {
-                tiles.placeOnTile(sprite_equipment, tiles.locationOfSprite(sprite_cursor_box))
-                grid.snap(sprite_equipment)
+                tiles.placeOnTile(sprite_equipement, tiles.locationOfSprite(sprite_cursor_box))
+                grid.snap(sprite_equipement)
                 break;
             }
         }
@@ -267,13 +246,13 @@ blockMenu.onMenuOptionSelected(function (option, index) {
     selected = true
 })
 // TODO: 
-// - Convert belts to sprites
 // - Make generators work
 // - Make number spawning work
 // - Make conveyor belts work
 // - Make target work
-let sprite_equipment: Sprite = null
+let sprite_equipement: Sprite = null
 let selected = false
+let sprite_conveyor_belt: Sprite = null
 let sprite_cursor: Sprite = null
 let sprite_cursor_pointer: Sprite = null
 let controls_enabled = false
@@ -285,7 +264,7 @@ let last_placed_belt: Image = null
 make_map()
 make_cursor()
 blockMenu.setColors(1, 15)
-last_placed_belt = assets.tile`conveyor_up`
+last_placed_belt = assets.image`conveyor_up`
 last_placed_equipement = assets.image`generator_up`
 info.setScore(0)
 target_number = 2

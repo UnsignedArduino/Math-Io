@@ -37,9 +37,7 @@ namespace myTiles {
     //% fixedInstance jres blockIdentity=images._tile
     export const tile22 = image.ofBuffer(hex``);
     //% fixedInstance jres blockIdentity=images._tile
-    export const tile24 = image.ofBuffer(hex``);
-    //% fixedInstance jres blockIdentity=images._tile
-    export const tile23 = image.ofBuffer(hex``);
+    export const tile16 = image.ofBuffer(hex``);
     //% fixedInstance jres blockIdentity=images._tile
     export const tile17 = image.ofBuffer(hex``);
     //% fixedInstance jres blockIdentity=images._tile
@@ -47,9 +45,11 @@ namespace myTiles {
     //% fixedInstance jres blockIdentity=images._tile
     export const tile19 = image.ofBuffer(hex``);
     //% fixedInstance jres blockIdentity=images._tile
-    export const tile20 = image.ofBuffer(hex``);
+    export const tile24 = image.ofBuffer(hex``);
     //% fixedInstance jres blockIdentity=images._tile
-    export const tile16 = image.ofBuffer(hex``);
+    export const tile23 = image.ofBuffer(hex``);
+    //% fixedInstance jres blockIdentity=images._tile
+    export const tile20 = image.ofBuffer(hex``);
 
     helpers._registerFactory("tilemap", function(name: string) {
         switch(helpers.stringTrim(name)) {
@@ -160,20 +160,20 @@ namespace myTiles {
             case "tile11":return tile11;
             case "conveyor_right_up":
             case "tile22":return tile22;
-            case "conveyor_left_up":
-            case "tile24":return tile24;
-            case "conveyor_left_down":
-            case "tile23":return tile23;
+            case "conveyor_up_left":
+            case "tile16":return tile16;
             case "conveyor_up_right":
             case "tile17":return tile17;
             case "conveyor_down_left":
             case "tile18":return tile18;
             case "conveyor_down_right":
             case "tile19":return tile19;
+            case "conveyor_left_up":
+            case "tile24":return tile24;
+            case "conveyor_left_down":
+            case "tile23":return tile23;
             case "conveyor_right_down":
             case "tile20":return tile20;
-            case "conveyor_up_left":
-            case "tile16":return tile16;
         }
         return null;
     })

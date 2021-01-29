@@ -37,42 +37,6 @@ a . . . . . . a
 a . . . . . . a 
 a a a a a a a a 
 `;
-            case "image8":return img`
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-`;
-            case "image9":return img`
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-`;
             case "image4":
             case "generator_up":return img`
 . . f f f f . . 
@@ -116,6 +80,138 @@ f b b b b b b f
 f f b b b b b f 
 . f b b b b b f 
 . f f f f f f f 
+`;
+            case "image13":
+            case "conveyor_left_up":return img`
+. b c c c c b . 
+. c c b b c c c 
+. b b b b c c c 
+. b b c c b c b 
+. b c b b b c b 
+. b c b b b c c 
+. c b b b b b c 
+. . . . . . . . 
+`;
+            case "image14":
+            case "conveyor_left_down":return img`
+. . . . . . . . 
+. c b b b b b c 
+. b c b b b c c 
+. b c b b b c b 
+. b b c c b c b 
+. b b b b c c c 
+. c c b b c c c 
+. b c c c c b . 
+`;
+            case "image15":
+            case "conveyor_up_right":return img`
+. . . . . . . . 
+. c b b b b c b 
+. b c c b b c c 
+. b b b c b b c 
+. b b b c b b c 
+. b b b b c c c 
+. b c c c c c b 
+. c c b b c c . 
+`;
+            case "image16":
+            case "conveyor_down_left":return img`
+. c c b b c c . 
+b c c c c c b . 
+c c c b b b b . 
+c b b c b b b . 
+c b b c b b b . 
+c c b b c c b . 
+b c b b b b c . 
+. . . . . . . . 
+`;
+            case "image17":
+            case "conveyor_down_right":return img`
+. c c b b c c . 
+. b c c c c c b 
+. b b b b c c c 
+. b b b c b b c 
+. b b b c b b c 
+. b c c b b c c 
+. c b b b b c b 
+. . . . . . . . 
+`;
+            case "image18":
+            case "conveyor_right_down":return img`
+. . . . . . . . 
+c b b b b b c . 
+c c b b b c b . 
+b c b b b c b . 
+b c b c c b b . 
+c c c b b b b . 
+c c c b b c c . 
+. b c c c c b . 
+`;
+            case "image10":
+            case "conveyor_up":return img`
+. b b c c b b . 
+. b c c c c b . 
+. c c b b c c . 
+. b b b b b b . 
+. b b c c b b . 
+. b c c c c b . 
+. c c b b c c . 
+. b b b b b b . 
+`;
+            case "image19":
+            case "conveyor_up_left":return img`
+. . . . . . . . 
+b c b b b b c . 
+c c b b c c b . 
+c b b c b b b . 
+c b b c b b b . 
+c c c b b b b . 
+b c c c c c b . 
+. c c b b c c . 
+`;
+            case "image11":
+            case "conveyor_down":return img`
+. b b b b b b . 
+. c c b b c c . 
+. b c c c c b . 
+. b b c c b b . 
+. b b b b b b . 
+. c c b b c c . 
+. b c c c c b . 
+. b b c c b b . 
+`;
+            case "image9":
+            case "conveyor_left":return img`
+. . . . . . . . 
+b b c b b b c b 
+b c c b b c c b 
+c c b b c c b b 
+c c b b c c b b 
+b c c b b c c b 
+b b c b b b c b 
+. . . . . . . . 
+`;
+            case "image8":
+            case "conveyor_right":return img`
+. . . . . . . . 
+b c b b b c b b 
+b c c b b c c b 
+b b c c b b c c 
+b b c c b b c c 
+b c c b b c c b 
+b c b b b c b b 
+. . . . . . . . 
+`;
+            case "image12":
+            case "conveyor_right_up":return img`
+. b c c c c b . 
+c c c b b c c . 
+c c c b b b b . 
+b c b c c b b . 
+b c b b b c b . 
+c c b b b c b . 
+c b b b b b c . 
+. . . . . . . . 
 `;
         }
         return null;

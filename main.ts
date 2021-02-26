@@ -151,7 +151,7 @@ spriteutils.createRenderable(150, function (screen2) {
     if (sprite_cursor_pointer.top < tiles.tilemapRows() * tiles.tileWidth() - 12 && !(blockMenu.isMenuOpen())) {
         screen2.fillRect(0, scene.screenHeight() - 12, 160, scene.screenHeight(), 15)
         screen2.drawLine(0, scene.screenHeight() - 12, 160, scene.screenHeight() - 12, 1)
-        images.print(screen2, "Target: " + target_number + " (Need " + target_needed + ")", 2, scene.screenHeight() - 10, 1)
+        images.print(screen2, "Target: " + target_number + " (Have " + target_have + "/" + target_needed + ")", 2, scene.screenHeight() - 10, 1)
     }
 })
 function string_to_tilemap_direction (direction: string) {
@@ -197,7 +197,7 @@ function make_item (number: number, generator: Sprite) {
 function make_generator (image2: Image, to: string) {
     local_sprite = sprites.create(image2, SpriteKind.Generator)
     sprites.setDataString(local_sprite, "to", to)
-    local_sprite.z = 1
+    local_sprite.z = 3
     return local_sprite
 }
 function ask_for_conveyor () {
@@ -283,7 +283,12 @@ function wait_for_select () {
     blockMenu.closeMenu()
 }
 scene.onOverlapTile(SpriteKind.Item, assets.tile`acceptor`, function (sprite, location) {
-    info.changeScoreBy(1)
+    if (sprites.readDataNumber(sprite, "value") == target_number) {
+        target_have += 1
+        info.changeScoreBy(10)
+    } else {
+        info.changeScoreBy(1)
+    }
     sprite.destroy()
 })
 sprites.onDestroyed(SpriteKind.Belt, function (sprite) {
@@ -322,10 +327,13 @@ blockMenu.onMenuOptionSelected(function (option, index) {
     selected = true
 })
 // TODO: 
-// - Make generators work
-// - Make number spawning work
-// - Make conveyor belts work
+// - Make balancer block work
+// - Make sorter
 // - Make target work
+// - Make adder
+// - Make subtracter
+// - Make multiplier
+// - Make divider
 let next_belt_item: Sprite = null
 let next_converyor_belt: Sprite = null
 let belt_item: Sprite = null
@@ -341,6 +349,7 @@ let controls_enabled = false
 let local_sprite: Sprite = null
 let sprite_cursor_box: Sprite = null
 let target_needed = 0
+let target_have = 0
 let target_number = 0
 let ticks_per_second = 10
 make_map()
@@ -348,8 +357,8 @@ make_cursor()
 blockMenu.setColors(1, 15)
 info.setScore(0)
 target_number = 2
+target_have = 0
 target_needed = 30
-spriteutils.setConsoleOverlay(true)
 game.onUpdateInterval(1000 / ticks_per_second, function () {
     for (let sprite_sprite of sprites.allOfKind(SpriteKind.Item)) {
         sprites.setDataBoolean(sprite_sprite, "moved", false)

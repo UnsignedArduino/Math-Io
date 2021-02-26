@@ -98,6 +98,7 @@ function make_belt (image2: Image, _from: string, to: string) {
     sprites.setDataString(local_sprite, "from", _from)
     sprites.setDataString(local_sprite, "to", to)
     sprites.setDataSprite(local_sprite, "item", null)
+    sprites.setDataBoolean(local_sprite, "fake", false)
     local_sprite.z = 1
     return local_sprite
 }
@@ -109,7 +110,7 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
 function on_deleteable_sprite (sprite: Sprite) {
     for (let kind of [SpriteKind.Belt, SpriteKind.Generator]) {
         for (let sprite_sprite of grid.getSprites(tiles.locationOfSprite(sprite))) {
-            if (sprite_sprite.kind() == kind) {
+            if (sprite_sprite.kind() == kind && !(sprite_sprite.image.equals(assets.image`blank`))) {
                 return sprite_sprite
             }
         }
@@ -190,6 +191,7 @@ function make_item (number: number, generator: Sprite) {
     local_item.setPosition(generator.x, generator.y)
     local_item.z = 2
     sprites.setDataNumber(local_item, "value", number)
+    sprites.setDataBoolean(local_item, "moved", false)
     return local_item
 }
 function make_generator (image2: Image, to: string) {
@@ -267,6 +269,11 @@ function enable_cursor (en: boolean, speed: boolean) {
 function make_map () {
     tiles.setSmallTilemap(tilemap`map`)
     scene.setBackgroundColor(13)
+    for (let location of tiles.getTilesByType(assets.tile`acceptor`)) {
+        sprite_fake_belt = sprites.create(assets.image`blank`, SpriteKind.Belt)
+        grid.place(sprite_fake_belt, location)
+        sprites.setDataBoolean(sprite_fake_belt, "fake", true)
+    }
 }
 function wait_for_select () {
     selected = false
@@ -324,6 +331,7 @@ let next_converyor_belt: Sprite = null
 let belt_item: Sprite = null
 let sprite_equipement: Sprite = null
 let selected = false
+let sprite_fake_belt: Sprite = null
 let sprite_conveyor_belt: Sprite = null
 let local_item: Sprite = null
 let local_number_string = ""
@@ -343,6 +351,9 @@ target_number = 2
 target_needed = 30
 spriteutils.setConsoleOverlay(true)
 game.onUpdateInterval(1000 / ticks_per_second, function () {
+    for (let sprite_sprite of sprites.allOfKind(SpriteKind.Item)) {
+        sprites.setDataBoolean(sprite_sprite, "moved", false)
+    }
     for (let sprite_sprite of sprites.allOfKind(SpriteKind.Belt)) {
         belt_item = sprites.readDataSprite(sprite_sprite, "item")
         if (grid.lineAdjacentSprites(tiles.locationOfSprite(sprite_sprite), string_to_direction(sprites.readDataString(sprite_sprite, "to")), 1).length == 0) {
@@ -350,24 +361,16 @@ game.onUpdateInterval(1000 / ticks_per_second, function () {
         } else {
             next_converyor_belt = grid.lineAdjacentSprites(tiles.locationOfSprite(sprite_sprite), string_to_direction(sprites.readDataString(sprite_sprite, "to")), 1)[0]
         }
-        if (string_to_tilemap_direction(sprites.readDataString(sprite_sprite, "to")) == CollisionDirection.Right && tiles.tileAtLocationEquals(tiles.locationInDirection(tiles.locationOfSprite(sprite_sprite), CollisionDirection.Right), assets.tile`acceptor`)) {
-            belt_item.vx = 100
-            sprites.setDataSprite(sprite_sprite, "item", null)
-        } else if (string_to_tilemap_direction(sprites.readDataString(sprite_sprite, "to")) == CollisionDirection.Left && tiles.tileAtLocationEquals(tiles.locationInDirection(tiles.locationOfSprite(sprite_sprite), CollisionDirection.Left), assets.tile`acceptor`)) {
-            belt_item.vx = -100
-            sprites.setDataSprite(sprite_sprite, "item", null)
-        } else if (string_to_tilemap_direction(sprites.readDataString(sprite_sprite, "to")) == CollisionDirection.Bottom && tiles.tileAtLocationEquals(tiles.locationInDirection(tiles.locationOfSprite(sprite_sprite), CollisionDirection.Bottom), assets.tile`acceptor`)) {
-            belt_item.vy = 100
-            sprites.setDataSprite(sprite_sprite, "item", null)
-        } else if (string_to_tilemap_direction(sprites.readDataString(sprite_sprite, "to")) == CollisionDirection.Top && tiles.tileAtLocationEquals(tiles.locationInDirection(tiles.locationOfSprite(sprite_sprite), CollisionDirection.Top), assets.tile`acceptor`)) {
-            belt_item.vy = -100
-            sprites.setDataSprite(sprite_sprite, "item", null)
-        } else {
-            next_belt_item = sprites.readDataSprite(next_converyor_belt, "item")
-            if (belt_item && !(next_belt_item) && sprites.readDataString(sprite_sprite, "to") == sprites.readDataString(next_converyor_belt, "from")) {
+        next_belt_item = sprites.readDataSprite(next_converyor_belt, "item")
+        if (belt_item && !(next_belt_item) && sprites.readDataString(sprite_sprite, "to") == sprites.readDataString(next_converyor_belt, "from") || sprites.readDataBoolean(next_converyor_belt, "fake")) {
+            if (!(sprites.readDataBoolean(belt_item, "moved"))) {
+                sprites.setDataBoolean(belt_item, "moved", true)
                 sprites.setDataSprite(next_converyor_belt, "item", belt_item)
                 sprites.setDataSprite(sprite_sprite, "item", null)
-                sprites.readDataSprite(next_converyor_belt, "item").follow(next_converyor_belt, 100)
+                next_belt_item = sprites.readDataSprite(next_converyor_belt, "item")
+                if (next_belt_item) {
+                    next_belt_item.follow(next_converyor_belt, 100)
+                }
             }
         }
     }

@@ -144,7 +144,11 @@
         "mimeType": "image/x-mkcd-f4",
         "displayName": "small_0"
     },
-    "image30": "hwQQABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+    "image30": {
+        "data": "hwQBAAEAAAAAAAAA",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "blank"
+    },
     "*": {
         "mimeType": "image/x-mkcd-f4",
         "dataEncoding": "base64",

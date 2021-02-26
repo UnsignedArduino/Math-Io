@@ -54,6 +54,13 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
         }
     })
 })
+function make_belt (image2: Image, _from: string, to: string) {
+    local_sprite = sprites.create(image2, SpriteKind.Belt)
+    sprites.setDataString(local_sprite, "from", _from)
+    sprites.setDataString(local_sprite, "to", to)
+    sprites.setDataSprite(local_sprite, "item", null)
+    return local_sprite
+}
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (controls_enabled) {
         enable_cursor(true, true)
@@ -99,88 +106,62 @@ controller.A.onEvent(ControllerButtonEvent.Released, function () {
         enable_cursor(true, false)
     }
 })
+function make_generator (image2: Image, to: string) {
+    local_sprite = sprites.create(image2, SpriteKind.Generator)
+    sprites.setDataString(local_sprite, "to", to)
+    return local_sprite
+}
 function ask_for_conveyor () {
     while (true) {
-        blockMenu.showMenu([
-        "Cancel",
-        "Last placed conveyor belt",
-        "^ Up ^",
-        "v Down v",
-        "< Left <",
-        "> Right >"
-        ], MenuStyle.Grid, MenuLocation.BottomHalf)
+        blockMenu.showMenu(["Cancel", "Up", "Down", "Left", "Right"], MenuStyle.Grid, MenuLocation.BottomHalf)
         wait_for_select()
         if (blockMenu.selectedMenuIndex() == 0) {
             break;
         } else if (blockMenu.selectedMenuIndex() == 1) {
-            sprite_conveyor_belt = sprites.create(last_placed_belt, SpriteKind.Belt)
+            blockMenu.showMenu(["Back", "Up straight", "Up left", "Up right"], MenuStyle.List, MenuLocation.BottomHalf)
+            wait_for_select()
+            if (blockMenu.selectedMenuIndex() == 1) {
+                sprite_conveyor_belt = make_belt(assets.image`conveyor_up`, "n", "n")
+            } else if (blockMenu.selectedMenuIndex() == 2) {
+                sprite_conveyor_belt = make_belt(assets.image`conveyor_up_left`, "n", "w")
+            } else if (blockMenu.selectedMenuIndex() == 3) {
+                sprite_conveyor_belt = make_belt(assets.image`conveyor_up_right`, "n", "e")
+            }
+        } else if (blockMenu.selectedMenuIndex() == 3) {
+            blockMenu.showMenu(["Back", "Down straight", "Down left", "Down right"], MenuStyle.List, MenuLocation.BottomHalf)
+            wait_for_select()
+            if (blockMenu.selectedMenuIndex() == 1) {
+                sprite_conveyor_belt = make_belt(assets.image`conveyor_down`, "s", "s")
+            } else if (blockMenu.selectedMenuIndex() == 2) {
+                sprite_conveyor_belt = make_belt(assets.image`conveyor_down_left`, "s", "w")
+            } else if (blockMenu.selectedMenuIndex() == 3) {
+                sprite_conveyor_belt = make_belt(assets.image`conveyor_down_right`, "s", "e")
+            }
+        } else if (blockMenu.selectedMenuIndex() == 4) {
+            blockMenu.showMenu(["Back", "Straight left", "Left up", "Left down"], MenuStyle.List, MenuLocation.BottomHalf)
+            wait_for_select()
+            if (blockMenu.selectedMenuIndex() == 1) {
+                sprite_conveyor_belt = make_belt(assets.image`conveyor_left`, "w", "w")
+            } else if (blockMenu.selectedMenuIndex() == 2) {
+                sprite_conveyor_belt = make_belt(assets.image`conveyor_left_up`, "w", "n")
+            } else if (blockMenu.selectedMenuIndex() == 3) {
+                sprite_conveyor_belt = make_belt(assets.image`conveyor_left_down`, "w", "s")
+            }
+        } else if (blockMenu.selectedMenuIndex() == 5) {
+            blockMenu.showMenu(["Back", "Straight right", "Right up", "Right down"], MenuStyle.List, MenuLocation.BottomHalf)
+            wait_for_select()
+            if (blockMenu.selectedMenuIndex() == 1) {
+                sprite_conveyor_belt = make_belt(assets.image`conveyor_right`, "e", "e")
+            } else if (blockMenu.selectedMenuIndex() == 2) {
+                sprite_conveyor_belt = make_belt(assets.image`conveyor_right_up`, "e", "n")
+            } else if (blockMenu.selectedMenuIndex() == 3) {
+                sprite_conveyor_belt = make_belt(assets.image`conveyor_right_down`, "e", "s")
+            }
+        }
+        if (blockMenu.selectedMenuIndex() > 0) {
             tiles.placeOnTile(sprite_conveyor_belt, tiles.locationOfSprite(sprite_cursor_box))
             grid.snap(sprite_conveyor_belt)
             break;
-        } else if (blockMenu.selectedMenuIndex() == 2) {
-            blockMenu.showMenu(["Back", "^ Up straight ^", "^< Up left ^<", "^> Up right ^>"], MenuStyle.List, MenuLocation.BottomHalf)
-            wait_for_select()
-            if (blockMenu.selectedMenuIndex() == 1) {
-                sprite_conveyor_belt = sprites.create(assets.image`conveyor_up`, SpriteKind.Belt)
-            } else if (blockMenu.selectedMenuIndex() == 2) {
-                sprite_conveyor_belt = sprites.create(assets.image`conveyor_up_left`, SpriteKind.Belt)
-            } else if (blockMenu.selectedMenuIndex() == 3) {
-                sprite_conveyor_belt = sprites.create(assets.image`conveyor_up_right`, SpriteKind.Belt)
-            }
-            if (blockMenu.selectedMenuIndex() > 0) {
-                tiles.placeOnTile(sprite_conveyor_belt, tiles.locationOfSprite(sprite_cursor_box))
-                last_placed_belt = sprite_conveyor_belt.image
-                grid.snap(sprite_conveyor_belt)
-                break;
-            }
-        } else if (blockMenu.selectedMenuIndex() == 3) {
-            blockMenu.showMenu(["Back", "v Down straight v", "v< Down left v<", "v> Down right v>"], MenuStyle.List, MenuLocation.BottomHalf)
-            wait_for_select()
-            if (blockMenu.selectedMenuIndex() == 1) {
-                sprite_conveyor_belt = sprites.create(assets.image`conveyor_down`, SpriteKind.Belt)
-            } else if (blockMenu.selectedMenuIndex() == 2) {
-                sprite_conveyor_belt = sprites.create(assets.image`conveyor_down_left`, SpriteKind.Belt)
-            } else if (blockMenu.selectedMenuIndex() == 3) {
-                sprite_conveyor_belt = sprites.create(assets.image`conveyor_down_right`, SpriteKind.Belt)
-            }
-            if (blockMenu.selectedMenuIndex() > 0) {
-                tiles.placeOnTile(sprite_conveyor_belt, tiles.locationOfSprite(sprite_cursor_box))
-                last_placed_belt = sprite_conveyor_belt.image
-                grid.snap(sprite_conveyor_belt)
-                break;
-            }
-        } else if (blockMenu.selectedMenuIndex() == 4) {
-            blockMenu.showMenu(["Back", "< Straight left <", "<^ Left up <^", "<v Left down <v"], MenuStyle.List, MenuLocation.BottomHalf)
-            wait_for_select()
-            if (blockMenu.selectedMenuIndex() == 1) {
-                sprite_conveyor_belt = sprites.create(assets.image`conveyor_left`, SpriteKind.Belt)
-            } else if (blockMenu.selectedMenuIndex() == 2) {
-                sprite_conveyor_belt = sprites.create(assets.image`conveyor_left_up`, SpriteKind.Belt)
-            } else if (blockMenu.selectedMenuIndex() == 3) {
-                sprite_conveyor_belt = sprites.create(assets.image`conveyor_left_down`, SpriteKind.Belt)
-            }
-            if (blockMenu.selectedMenuIndex() > 0) {
-                tiles.placeOnTile(sprite_conveyor_belt, tiles.locationOfSprite(sprite_cursor_box))
-                last_placed_belt = sprite_conveyor_belt.image
-                grid.snap(sprite_conveyor_belt)
-                break;
-            }
-        } else if (blockMenu.selectedMenuIndex() == 5) {
-            blockMenu.showMenu(["Back", "> Straight right >", ">^ Right up >^", ">v Right down >v"], MenuStyle.List, MenuLocation.BottomHalf)
-            wait_for_select()
-            if (blockMenu.selectedMenuIndex() == 1) {
-                sprite_conveyor_belt = sprites.create(assets.image`conveyor_right`, SpriteKind.Belt)
-            } else if (blockMenu.selectedMenuIndex() == 2) {
-                sprite_conveyor_belt = sprites.create(assets.image`conveyor_right_up`, SpriteKind.Belt)
-            } else if (blockMenu.selectedMenuIndex() == 3) {
-                sprite_conveyor_belt = sprites.create(assets.image`conveyor_right_down`, SpriteKind.Belt)
-            }
-            if (blockMenu.selectedMenuIndex() > 0) {
-                tiles.placeOnTile(sprite_conveyor_belt, tiles.locationOfSprite(sprite_cursor_box))
-                last_placed_belt = sprite_conveyor_belt.image
-                grid.snap(sprite_conveyor_belt)
-                break;
-            }
         }
     }
 }
@@ -209,36 +190,27 @@ function wait_for_select () {
 }
 function ask_for_equipment () {
     while (true) {
-        blockMenu.showMenu(["Cancel", "Last placed equipment", "Generator"], MenuStyle.Grid, MenuLocation.BottomHalf)
+        blockMenu.showMenu(["Cancel", "Generator"], MenuStyle.Grid, MenuLocation.BottomHalf)
         wait_for_select()
         if (blockMenu.selectedMenuIndex() == 0) {
             break;
         } else if (blockMenu.selectedMenuIndex() == 1) {
-            sprite_equipement = sprites.create(last_placed_equipement, SpriteKind.Generator)
+            blockMenu.showMenu(["Back", "Generator up", "Generator right", "Generator down", "Generator left"], MenuStyle.List, MenuLocation.BottomHalf)
+            wait_for_select()
+            if (blockMenu.selectedMenuIndex() == 1) {
+                sprite_equipement = make_generator(assets.image`generator_up`, "n")
+            } else if (blockMenu.selectedMenuIndex() == 2) {
+                sprite_equipement = make_generator(assets.image`generator_right`, "e")
+            } else if (blockMenu.selectedMenuIndex() == 3) {
+                sprite_equipement = make_generator(assets.image`generator_down`, "s")
+            } else if (blockMenu.selectedMenuIndex() == 4) {
+                sprite_equipement = make_generator(assets.image`generator_left`, "w")
+            }
+        }
+        if (blockMenu.selectedMenuIndex() > 0) {
             tiles.placeOnTile(sprite_equipement, tiles.locationOfSprite(sprite_cursor_box))
             grid.snap(sprite_equipement)
             break;
-        } else if (blockMenu.selectedMenuIndex() == 2) {
-            blockMenu.showMenu(["Back", "^ Generator up ^", "> Generator right >", "v Generator down v", "< Generator left <"], MenuStyle.List, MenuLocation.BottomHalf)
-            wait_for_select()
-            if (blockMenu.selectedMenuIndex() == 1) {
-                sprite_equipement = sprites.create(assets.image`generator_up`, SpriteKind.Generator)
-                last_placed_equipement = assets.image`generator_up`
-            } else if (blockMenu.selectedMenuIndex() == 2) {
-                sprite_equipement = sprites.create(assets.image`generator_right`, SpriteKind.Generator)
-                last_placed_equipement = assets.image`generator_right`
-            } else if (blockMenu.selectedMenuIndex() == 3) {
-                sprite_equipement = sprites.create(assets.image`generator_down`, SpriteKind.Generator)
-                last_placed_equipement = assets.image`generator_down`
-            } else if (blockMenu.selectedMenuIndex() == 4) {
-                sprite_equipement = sprites.create(assets.image`generator_left`, SpriteKind.Generator)
-                last_placed_equipement = assets.image`generator_left`
-            }
-            if (blockMenu.selectedMenuIndex() > 0) {
-                tiles.placeOnTile(sprite_equipement, tiles.locationOfSprite(sprite_cursor_box))
-                grid.snap(sprite_equipement)
-                break;
-            }
         }
     }
 }
@@ -256,16 +228,13 @@ let sprite_conveyor_belt: Sprite = null
 let sprite_cursor: Sprite = null
 let sprite_cursor_pointer: Sprite = null
 let controls_enabled = false
+let local_sprite: Sprite = null
 let sprite_cursor_box: Sprite = null
 let target_needed = 0
 let target_number = 0
-let last_placed_equipement: Image = null
-let last_placed_belt: Image = null
 make_map()
 make_cursor()
 blockMenu.setColors(1, 15)
-last_placed_belt = assets.image`conveyor_up`
-last_placed_equipement = assets.image`generator_up`
 info.setScore(0)
 target_number = 2
 target_needed = 30

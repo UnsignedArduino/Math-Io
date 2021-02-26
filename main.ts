@@ -2,6 +2,7 @@ namespace SpriteKind {
     export const Equipement = SpriteKind.create()
     export const Generator = SpriteKind.create()
     export const Belt = SpriteKind.create()
+    export const Item = SpriteKind.create()
 }
 function on_buildable_tile (sprite: Sprite) {
     for (let tile of [
@@ -67,6 +68,31 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
         }
     })
 })
+function get_number_from_generator (generator: Sprite) {
+    if (tiles.tileIs(tiles.locationOfSprite(generator), assets.tile`tile_1`)) {
+        return 1
+    } else if (tiles.tileIs(tiles.locationOfSprite(generator), assets.tile`tile_2`)) {
+        return 2
+    } else if (tiles.tileIs(tiles.locationOfSprite(generator), assets.tile`tile_3`)) {
+        return 3
+    } else if (tiles.tileIs(tiles.locationOfSprite(generator), assets.tile`tile_0`)) {
+        return 4
+    } else if (tiles.tileIs(tiles.locationOfSprite(generator), assets.tile`tile_4`)) {
+        return 5
+    } else if (tiles.tileIs(tiles.locationOfSprite(generator), assets.tile`tile_5`)) {
+        return 6
+    } else if (tiles.tileIs(tiles.locationOfSprite(generator), assets.tile`tile_6`)) {
+        return 7
+    } else if (tiles.tileIs(tiles.locationOfSprite(generator), assets.tile`tile_7`)) {
+        return 8
+    } else if (tiles.tileIs(tiles.locationOfSprite(generator), assets.tile`tile_8`)) {
+        return 9
+    } else if (tiles.tileIs(tiles.locationOfSprite(generator), assets.tile`tile_9`)) {
+        return 0
+    } else {
+        return -1
+    }
+}
 function make_belt (image2: Image, _from: string, to: string) {
     local_sprite = sprites.create(image2, SpriteKind.Belt)
     sprites.setDataString(local_sprite, "from", _from)
@@ -88,6 +114,31 @@ function on_deleteable_sprite (sprite: Sprite) {
         }
     }
     return sprite
+}
+function number_to_image (num: number) {
+    if (num == 0) {
+        return assets.image`small_0`
+    } else if (num == 1) {
+        return assets.image`small_1`
+    } else if (num == 2) {
+        return assets.image`small_2`
+    } else if (num == 3) {
+        return assets.image`small_3`
+    } else if (num == 4) {
+        return assets.image`small_4`
+    } else if (num == 5) {
+        return assets.image`small_5`
+    } else if (num == 6) {
+        return assets.image`small_6`
+    } else if (num == 7) {
+        return assets.image`small_7`
+    } else if (num == 8) {
+        return assets.image`small_8`
+    } else if (num == 9) {
+        return assets.image`small_9`
+    } else {
+        return assets.image`small_0`
+    }
 }
 spriteutils.createRenderable(150, function (screen2) {
     if (sprite_cursor_pointer.top > 12) {
@@ -119,6 +170,27 @@ controller.A.onEvent(ControllerButtonEvent.Released, function () {
         enable_cursor(true, false)
     }
 })
+function make_item (number: number) {
+    local_number_string = convertToText(number)
+    local_item = sprites.create(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, SpriteKind.Item)
+}
 function make_generator (image2: Image, to: string) {
     local_sprite = sprites.create(image2, SpriteKind.Generator)
     sprites.setDataString(local_sprite, "to", to)
@@ -241,6 +313,8 @@ let belt_item: Sprite = null
 let sprite_equipement: Sprite = null
 let selected = false
 let sprite_conveyor_belt: Sprite = null
+let local_item: Sprite = null
+let local_number_string = ""
 let sprite_cursor: Sprite = null
 let sprite_cursor_pointer: Sprite = null
 let controls_enabled = false
@@ -266,16 +340,27 @@ forever(function () {
     timer.throttle("tick", 1000 / ticks_per_second, function () {
         for (let sprite_sprite of sprites.allOfKind(SpriteKind.Belt)) {
             belt_item = sprites.readDataSprite(sprite_sprite, "item")
-            if (grid.lineAdjacentSprites(tiles.locationOfSprite(sprite_sprite), string_to_direction("abc"), 1).length == 0) {
+            if (grid.lineAdjacentSprites(tiles.locationOfSprite(sprite_sprite), string_to_direction(sprites.readDataString(sprite_sprite, "to")), 1).length == 0) {
                 continue;
             } else {
-                next_converyor_belt = grid.lineAdjacentSprites(tiles.locationOfSprite(sprite_sprite), string_to_direction("abc"), 1)[0]
+                next_converyor_belt = grid.lineAdjacentSprites(tiles.locationOfSprite(sprite_sprite), string_to_direction(sprites.readDataString(sprite_sprite, "to")), 1)[0]
             }
             next_belt_item = sprites.readDataSprite(next_converyor_belt, "item")
             if (belt_item && !(next_belt_item) && sprites.readDataString(sprite_sprite, "to") == sprites.readDataString(next_converyor_belt, "from")) {
                 sprites.setDataSprite(next_converyor_belt, "item", belt_item)
                 sprites.setDataSprite(sprite_sprite, "item", null)
                 sprites.readDataSprite(next_converyor_belt, "item").follow(next_converyor_belt, 100)
+            }
+        }
+        for (let sprite_sprite of sprites.allOfKind(SpriteKind.Generator)) {
+            if (grid.lineAdjacentSprites(tiles.locationOfSprite(sprite_sprite), string_to_direction(sprites.readDataString(sprite_sprite, "to")), 1).length == 0) {
+                continue;
+            } else {
+                next_converyor_belt = grid.lineAdjacentSprites(tiles.locationOfSprite(sprite_sprite), string_to_direction(sprites.readDataString(sprite_sprite, "to")), 1)[0]
+            }
+            next_belt_item = sprites.readDataSprite(next_converyor_belt, "item")
+            if (!(next_belt_item)) {
+                sprites.setDataSprite(next_converyor_belt, "item", null)
             }
         }
     })

@@ -213,6 +213,104 @@ c c b b b c b .
 c b b b b b c . 
 . . . . . . . . 
 `;
+            case "image30":return img`
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+`;
+            case "image20":
+            case "small_0":return img`
+. f f f . 
+. f . f . 
+. f . f . 
+. f . f . 
+. f f f . 
+`;
+            case "image21":
+            case "small_1":return img`
+. . f . . 
+. . f . . 
+. . f . . 
+. . f . . 
+. . f . . 
+`;
+            case "image22":
+            case "small_2":return img`
+. f f f . 
+. . . f . 
+. f f f . 
+. f . . . 
+. f f f . 
+`;
+            case "image23":
+            case "small_3":return img`
+. f f f . 
+. . . f . 
+. f f f . 
+. . . f . 
+. f f f . 
+`;
+            case "image24":
+            case "small_4":return img`
+. f . f . 
+. f . f . 
+. f f f . 
+. . . f . 
+. . . f . 
+`;
+            case "image25":
+            case "small_5":return img`
+. f f f . 
+. f . . . 
+. f f f . 
+. . . f . 
+. f f f . 
+`;
+            case "image26":
+            case "small_6":return img`
+. f f f . 
+. f . . . 
+. f f f . 
+. f . f . 
+. f f f . 
+`;
+            case "image27":
+            case "small_7":return img`
+. f f f . 
+. . . f . 
+. . . f . 
+. . . f . 
+. . . f . 
+`;
+            case "image28":
+            case "small_8":return img`
+. f f f . 
+. f . f . 
+. f f f . 
+. f . f . 
+. f f f . 
+`;
+            case "image29":
+            case "small_9":return img`
+. f f f . 
+. f . f . 
+. f f f . 
+. . . f . 
+. f f f . 
+`;
         }
         return null;
     })

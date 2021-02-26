@@ -98,6 +98,7 @@ function make_belt (image2: Image, _from: string, to: string) {
     sprites.setDataString(local_sprite, "from", _from)
     sprites.setDataString(local_sprite, "to", to)
     sprites.setDataSprite(local_sprite, "item", null)
+    local_sprite.z = 1
     return local_sprite
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
@@ -152,6 +153,19 @@ spriteutils.createRenderable(150, function (screen2) {
         images.print(screen2, "Target: " + target_number + " (Need " + target_needed + ")", 2, scene.screenHeight() - 10, 1)
     }
 })
+function string_to_tilemap_direction (direction: string) {
+    if (direction == "n") {
+        return CollisionDirection.Top
+    } else if (direction == "e") {
+        return CollisionDirection.Right
+    } else if (direction == "s") {
+        return CollisionDirection.Bottom
+    } else if (direction == "w") {
+        return CollisionDirection.Left
+    } else {
+        return CollisionDirection.Top
+    }
+}
 function make_cursor () {
     sprite_cursor = sprites.create(assets.image`cursor`, SpriteKind.Player)
     sprite_cursor.z = 99
@@ -170,30 +184,18 @@ controller.A.onEvent(ControllerButtonEvent.Released, function () {
         enable_cursor(true, false)
     }
 })
-function make_item (number: number) {
+function make_item (number: number, generator: Sprite) {
     local_number_string = convertToText(number)
-    local_item = sprites.create(img`
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Item)
+    local_item = sprites.create(number_to_image(parseFloat(local_number_string.charAt(0))), SpriteKind.Item)
+    local_item.setPosition(generator.x, generator.y)
+    local_item.z = 2
+    sprites.setDataNumber(local_item, "value", number)
+    return local_item
 }
 function make_generator (image2: Image, to: string) {
     local_sprite = sprites.create(image2, SpriteKind.Generator)
     sprites.setDataString(local_sprite, "to", to)
+    local_sprite.z = 1
     return local_sprite
 }
 function ask_for_conveyor () {
@@ -212,7 +214,7 @@ function ask_for_conveyor () {
             } else if (blockMenu.selectedMenuIndex() == 3) {
                 sprite_conveyor_belt = make_belt(assets.image`conveyor_up_right`, "n", "e")
             }
-        } else if (blockMenu.selectedMenuIndex() == 3) {
+        } else if (blockMenu.selectedMenuIndex() == 2) {
             blockMenu.showMenu(["Back", "Down straight", "Down left", "Down right"], MenuStyle.List, MenuLocation.BottomHalf)
             wait_for_select()
             if (blockMenu.selectedMenuIndex() == 1) {
@@ -222,7 +224,7 @@ function ask_for_conveyor () {
             } else if (blockMenu.selectedMenuIndex() == 3) {
                 sprite_conveyor_belt = make_belt(assets.image`conveyor_down_right`, "s", "e")
             }
-        } else if (blockMenu.selectedMenuIndex() == 4) {
+        } else if (blockMenu.selectedMenuIndex() == 3) {
             blockMenu.showMenu(["Back", "Straight left", "Left up", "Left down"], MenuStyle.List, MenuLocation.BottomHalf)
             wait_for_select()
             if (blockMenu.selectedMenuIndex() == 1) {
@@ -232,7 +234,7 @@ function ask_for_conveyor () {
             } else if (blockMenu.selectedMenuIndex() == 3) {
                 sprite_conveyor_belt = make_belt(assets.image`conveyor_left_down`, "w", "s")
             }
-        } else if (blockMenu.selectedMenuIndex() == 5) {
+        } else if (blockMenu.selectedMenuIndex() == 4) {
             blockMenu.showMenu(["Back", "Straight right", "Right up", "Right down"], MenuStyle.List, MenuLocation.BottomHalf)
             wait_for_select()
             if (blockMenu.selectedMenuIndex() == 1) {
@@ -273,6 +275,16 @@ function wait_for_select () {
     }
     blockMenu.closeMenu()
 }
+scene.onOverlapTile(SpriteKind.Item, assets.tile`acceptor`, function (sprite, location) {
+    info.changeScoreBy(1)
+    sprite.destroy()
+})
+sprites.onDestroyed(SpriteKind.Belt, function (sprite) {
+    local_item = sprites.readDataSprite(sprite, "item")
+    if (local_item) {
+        local_item.destroy()
+    }
+})
 function ask_for_equipment () {
     while (true) {
         blockMenu.showMenu(["Cancel", "Generator"], MenuStyle.Grid, MenuLocation.BottomHalf)
@@ -329,22 +341,28 @@ blockMenu.setColors(1, 15)
 info.setScore(0)
 target_number = 2
 target_needed = 30
-game.onUpdate(function () {
-    sprite_cursor.top = sprite_cursor_pointer.top
-    sprite_cursor.left = sprite_cursor_pointer.left
-    sprite_cursor_box.y = sprite_cursor_pointer.top
-    sprite_cursor_box.x = sprite_cursor_pointer.left
-    tiles.placeOnTile(sprite_cursor_box, tiles.locationOfSprite(sprite_cursor_box))
-})
-forever(function () {
-    timer.throttle("tick", 1000 / ticks_per_second, function () {
-        for (let sprite_sprite of sprites.allOfKind(SpriteKind.Belt)) {
-            belt_item = sprites.readDataSprite(sprite_sprite, "item")
-            if (grid.lineAdjacentSprites(tiles.locationOfSprite(sprite_sprite), string_to_direction(sprites.readDataString(sprite_sprite, "to")), 1).length == 0) {
-                continue;
-            } else {
-                next_converyor_belt = grid.lineAdjacentSprites(tiles.locationOfSprite(sprite_sprite), string_to_direction(sprites.readDataString(sprite_sprite, "to")), 1)[0]
-            }
+spriteutils.setConsoleOverlay(true)
+game.onUpdateInterval(1000 / ticks_per_second, function () {
+    for (let sprite_sprite of sprites.allOfKind(SpriteKind.Belt)) {
+        belt_item = sprites.readDataSprite(sprite_sprite, "item")
+        if (grid.lineAdjacentSprites(tiles.locationOfSprite(sprite_sprite), string_to_direction(sprites.readDataString(sprite_sprite, "to")), 1).length == 0) {
+            continue;
+        } else {
+            next_converyor_belt = grid.lineAdjacentSprites(tiles.locationOfSprite(sprite_sprite), string_to_direction(sprites.readDataString(sprite_sprite, "to")), 1)[0]
+        }
+        if (string_to_tilemap_direction(sprites.readDataString(sprite_sprite, "to")) == CollisionDirection.Right && tiles.tileAtLocationEquals(tiles.locationInDirection(tiles.locationOfSprite(sprite_sprite), CollisionDirection.Right), assets.tile`acceptor`)) {
+            belt_item.vx = 100
+            sprites.setDataSprite(sprite_sprite, "item", null)
+        } else if (string_to_tilemap_direction(sprites.readDataString(sprite_sprite, "to")) == CollisionDirection.Left && tiles.tileAtLocationEquals(tiles.locationInDirection(tiles.locationOfSprite(sprite_sprite), CollisionDirection.Left), assets.tile`acceptor`)) {
+            belt_item.vx = -100
+            sprites.setDataSprite(sprite_sprite, "item", null)
+        } else if (string_to_tilemap_direction(sprites.readDataString(sprite_sprite, "to")) == CollisionDirection.Bottom && tiles.tileAtLocationEquals(tiles.locationInDirection(tiles.locationOfSprite(sprite_sprite), CollisionDirection.Bottom), assets.tile`acceptor`)) {
+            belt_item.vy = 100
+            sprites.setDataSprite(sprite_sprite, "item", null)
+        } else if (string_to_tilemap_direction(sprites.readDataString(sprite_sprite, "to")) == CollisionDirection.Top && tiles.tileAtLocationEquals(tiles.locationInDirection(tiles.locationOfSprite(sprite_sprite), CollisionDirection.Top), assets.tile`acceptor`)) {
+            belt_item.vy = -100
+            sprites.setDataSprite(sprite_sprite, "item", null)
+        } else {
             next_belt_item = sprites.readDataSprite(next_converyor_belt, "item")
             if (belt_item && !(next_belt_item) && sprites.readDataString(sprite_sprite, "to") == sprites.readDataString(next_converyor_belt, "from")) {
                 sprites.setDataSprite(next_converyor_belt, "item", belt_item)
@@ -352,16 +370,27 @@ forever(function () {
                 sprites.readDataSprite(next_converyor_belt, "item").follow(next_converyor_belt, 100)
             }
         }
-        for (let sprite_sprite of sprites.allOfKind(SpriteKind.Generator)) {
-            if (grid.lineAdjacentSprites(tiles.locationOfSprite(sprite_sprite), string_to_direction(sprites.readDataString(sprite_sprite, "to")), 1).length == 0) {
-                continue;
-            } else {
-                next_converyor_belt = grid.lineAdjacentSprites(tiles.locationOfSprite(sprite_sprite), string_to_direction(sprites.readDataString(sprite_sprite, "to")), 1)[0]
-            }
-            next_belt_item = sprites.readDataSprite(next_converyor_belt, "item")
-            if (!(next_belt_item)) {
-                sprites.setDataSprite(next_converyor_belt, "item", null)
-            }
+    }
+    for (let sprite_sprite of sprites.allOfKind(SpriteKind.Generator)) {
+        if (get_number_from_generator(sprite_sprite) == -1) {
+            continue;
         }
-    })
+        if (grid.lineAdjacentSprites(tiles.locationOfSprite(sprite_sprite), string_to_direction(sprites.readDataString(sprite_sprite, "to")), 1).length == 0) {
+            continue;
+        } else {
+            next_converyor_belt = grid.lineAdjacentSprites(tiles.locationOfSprite(sprite_sprite), string_to_direction(sprites.readDataString(sprite_sprite, "to")), 1)[0]
+        }
+        next_belt_item = sprites.readDataSprite(next_converyor_belt, "item")
+        if (!(next_belt_item) && sprites.readDataString(sprite_sprite, "to") == sprites.readDataString(next_converyor_belt, "from")) {
+            sprites.setDataSprite(next_converyor_belt, "item", make_item(get_number_from_generator(sprite_sprite), sprite_sprite))
+            sprites.readDataSprite(next_converyor_belt, "item").follow(next_converyor_belt, 100)
+        }
+    }
+})
+game.onUpdate(function () {
+    sprite_cursor.top = sprite_cursor_pointer.top
+    sprite_cursor.left = sprite_cursor_pointer.left
+    sprite_cursor_box.y = sprite_cursor_pointer.top
+    sprite_cursor_box.x = sprite_cursor_pointer.left
+    tiles.placeOnTile(sprite_cursor_box, tiles.locationOfSprite(sprite_cursor_box))
 })

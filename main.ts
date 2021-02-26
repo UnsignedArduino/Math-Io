@@ -25,6 +25,19 @@ function on_buildable_tile (sprite: Sprite) {
     }
     return false
 }
+function string_to_direction (direction: string) {
+    if (direction == "n") {
+        return CollisionDirection.Top
+    } else if (direction == "e") {
+        return CollisionDirection.Right
+    } else if (direction == "s") {
+        return CollisionDirection.Bottom
+    } else if (direction == "w") {
+        return CollisionDirection.Left
+    } else {
+        return CollisionDirection.Top
+    }
+}
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
     timer.background(function () {
         if (!(blockMenu.isMenuOpen())) {
@@ -222,6 +235,9 @@ blockMenu.onMenuOptionSelected(function (option, index) {
 // - Make number spawning work
 // - Make conveyor belts work
 // - Make target work
+let next_belt_item: Sprite = null
+let next_converyor_belt: Sprite = null
+let belt_item: Sprite = null
 let sprite_equipement: Sprite = null
 let selected = false
 let sprite_conveyor_belt: Sprite = null
@@ -232,6 +248,7 @@ let local_sprite: Sprite = null
 let sprite_cursor_box: Sprite = null
 let target_needed = 0
 let target_number = 0
+let ticks_per_second = 10
 make_map()
 make_cursor()
 blockMenu.setColors(1, 15)
@@ -244,4 +261,22 @@ game.onUpdate(function () {
     sprite_cursor_box.y = sprite_cursor_pointer.top
     sprite_cursor_box.x = sprite_cursor_pointer.left
     tiles.placeOnTile(sprite_cursor_box, tiles.locationOfSprite(sprite_cursor_box))
+})
+forever(function () {
+    timer.throttle("tick", 1000 / ticks_per_second, function () {
+        for (let sprite_sprite of sprites.allOfKind(SpriteKind.Belt)) {
+            belt_item = sprites.readDataSprite(sprite_sprite, "item")
+            if (grid.lineAdjacentSprites(tiles.locationOfSprite(sprite_sprite), string_to_direction("abc"), 1).length == 0) {
+                continue;
+            } else {
+                next_converyor_belt = grid.lineAdjacentSprites(tiles.locationOfSprite(sprite_sprite), string_to_direction("abc"), 1)[0]
+            }
+            next_belt_item = sprites.readDataSprite(next_converyor_belt, "item")
+            if (belt_item && !(next_belt_item) && sprites.readDataString(sprite_sprite, "to") == sprites.readDataString(next_converyor_belt, "from")) {
+                sprites.setDataSprite(next_converyor_belt, "item", belt_item)
+                sprites.setDataSprite(sprite_sprite, "item", null)
+                sprites.readDataSprite(next_converyor_belt, "item").follow(next_converyor_belt, 100)
+            }
+        }
+    })
 })
